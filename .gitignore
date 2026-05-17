@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+.pytest_cache/
+env/
+venv/
+ENV/
+build/
+dist/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MIDI dataset
+midi_data/
+
+# Trained models
+*.h5
+*.pkl
+
+# Generated files
+generated_music.mid

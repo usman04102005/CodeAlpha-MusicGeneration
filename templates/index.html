@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Music Generator | CodeAlpha</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .status.ready {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .control-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .control-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-download {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-download:hover:not(:disabled) {
+            background: #45a049;
+        }
+        
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            padding: 10px;
+            background: white;
+            border-left: 4px solid #667eea;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 AI Music Generator</h1>
+            <p>Generate unique music with deep learning</p>
+        </div>
+        
+        <div class="status" id="status">
+            Checking model status...
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="temperature">Temperature (0.5 - 1.5):</label>
+                <input type="range" id="temperature" min="0.5" max="1.5" step="0.1" value="0.8">
+                <small>Lower = more consistent, Higher = more creative</small>
+            </div>
+            
+            <div class="control-group">
+                <label for="length">Notes to Generate:</label>
+                <input type="number" id="length" value="100" min="50" max="300">
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-generate" id="generateBtn" onclick="generateMusic()">
+                Generate 🚀
+            </button>
+            <button class="btn-download" id="downloadBtn" onclick="downloadMusic()" disabled>
+                Download MIDI 📥
+            </button>
+        </div>
+        
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Generating your music...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <h3>✅ Generation Complete!</h3>
+            <div class="result-item" id="resultContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5002/api';
+        
+        // Check status on load
+        document.addEventListener('DOMContentLoaded', checkStatus);
+        
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/status`);
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('status');
+                const generateBtn = document.getElementById('generateBtn');
+                
+                if (data.ready) {
+                    statusDiv.textContent = `✅ Model Ready! (${data.notes_count} unique notes)`;
+                    statusDiv.className = 'status ready';
+                    generateBtn.disabled = false;
+                } else {
+                    statusDiv.textContent = '❌ Model not ready. Please train the model first.';
+                    statusDiv.className = 'status error';
+                    generateBtn.disabled = true;
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 
+                    '❌ Cannot connect to server. Make sure Flask is running.';
+                document.getElementById('status').className = 'status error';
+            }
+        }
+        
+        async function generateMusic() {
+            const generateBtn = document.getElementById('generateBtn');
+            const loader = document.getElementById('loader');
+            const result = document.getElementById('result');
+            
+            generateBtn.disabled = true;
+            loader.style.display = 'block';
+            result.classList.remove('show');
+            
+            try {
+                const response = await fetch(`${API_BASE}/generate-music`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('resultContent').innerHTML = `
+                        <strong>Notes Generated:</strong> ${data.notes_count}<br>
+                        <strong>File:</strong> ${data.file}<br>
+                        <em>Ready to download!</em>
+                    `;
+                    result.classList.add('show');
+                    document.getElementById('downloadBtn').disabled = false;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error generating music: ' + error.message);
+            } finally {
+                loader.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        }
+        
+        function downloadMusic() {
+            window.location.href = `${API_BASE}/download-music`;
+        }
+    </script>
+</body>
+</html>

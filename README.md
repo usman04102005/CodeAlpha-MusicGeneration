@@ -85,11 +85,19 @@ http://127.0.0.1:5002
 
 ### Main Interface
 
-![Home](screenshots/home.png)
+<img width="1919" height="1079" alt="Screenshot 2026-05-17 145855" src="https://github.com/user-attachments/assets/f3b2839b-7ac8-4d07-9ae8-bc6d4b236737" />
+
 
 ### Music Generation
 
-![Generation](screenshots/generation.png)
+<img width="1919" height="1079" alt="Screenshot 2026-05-17 150004" src="https://github.com/user-attachments/assets/642b58d5-70fb-4e8a-bf43-bf905186e35f" />
+
+### Generated Music
+
+<img width="1919" height="1079" alt="Screenshot 2026-05-17 150021" src="https://github.com/user-attachments/assets/4e9589c5-acd8-45ba-bfff-1d542703d33a" />
+
+
+
 
 ## 👨‍💻 Author
 
